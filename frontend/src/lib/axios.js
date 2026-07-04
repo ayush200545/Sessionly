@@ -1,9 +1,9 @@
 import axios from 'axios'
 
-// Configured for cloud deployments
+// Force the correct Render backend URL, completely ignoring Vercel env variables if they are wrong
+const baseURL = 'https://sessionly-2weo.onrender.com';
 const apiClient = axios.create({
-  // Hardcoding the production Render URL to bypass Vercel environment variable issues
-  baseURL: import.meta.env.VITE_API_URL || 'https://sessionly-2weo.onrender.com',
+  baseURL,
 })
 
 // Automatically attach JWT token to every request
@@ -24,7 +24,7 @@ apiClient.interceptors.response.use(
       originalRequest._retry = true
       try {
         const refresh = localStorage.getItem('refresh_token')
-        const baseURL = import.meta.env.VITE_API_URL || 'https://sessionly-2weo.onrender.com'
+        const baseURL = 'https://sessionly-2weo.onrender.com'
         const res = await axios.post(`${baseURL}/api/auth/token/refresh/`, { refresh })
         localStorage.setItem('access_token', res.data.access)
         originalRequest.headers.Authorization = `Bearer ${res.data.access}`
