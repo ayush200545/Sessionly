@@ -41,21 +41,7 @@ export default function Navbar() {
     }
   }, [darkMode])
 
-  const autofill = (role) => {
-    if (role === 'attendee') {
-      setEmail('attendee@demo.com')
-      setPassword('demo1234')
-      toast.success('Attendee credentials loaded!')
-    } else if (role === 'creator') {
-      setEmail('creator@demo.com')
-      setPassword('demo1234')
-      toast.success('Creator credentials loaded!')
-    } else if (role === 'admin') {
-      setEmail('admin@example.com')
-      setPassword('admin123')
-      toast.success('Admin credentials loaded!')
-    }
-  }
+  // Autofill function removed for production
 
   const handleLogout = async () => {
     await logout()
@@ -327,23 +313,7 @@ export default function Navbar() {
                 {/* ── LOGIN TAB ── */}
                 {activeModalTab === 'login' && (
                   <>
-                    {/* Quick autofill helpers */}
-                    <div className="mb-5 p-3.5 bg-violet-50 dark:bg-violet-950/20 border border-violet-100 dark:border-violet-900/30 rounded-2xl">
-                      <span className="block text-[10px] font-bold text-violet-600 dark:text-violet-400 uppercase tracking-widest mb-2 text-center">
-                        ⚡ Click to autofill Demo Accounts
-                      </span>
-                      <div className="grid grid-cols-3 gap-2">
-                        {[['attendee','Attendee'],['creator','Creator'],['admin','Admin']].map(([r,l]) => (
-                          <button key={r} type="button" onClick={() => autofill(r)}
-                            className="px-2 py-1.5 rounded-xl bg-white dark:bg-zinc-950 text-[10px] font-bold text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 hover:border-violet-500 hover:text-violet-600 transition-colors shadow-sm text-center">
-                            {l}
-                          </button>
-                        ))}
-                      </div>
-                      <p className="text-[9px] text-zinc-400 dark:text-zinc-500 text-center mt-2">
-                        Attendee books courses • Creator publishes courses • Admin control portal
-                      </p>
-                    </div>
+                    {/* Quick autofill helpers removed for production */}
 
                     {loginError && (
                       <div className="mb-4 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/30 p-3.5 text-xs font-medium text-red-600 dark:text-red-400">
