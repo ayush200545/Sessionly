@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import apiClient from '../lib/axios'
 import axios from 'axios'
 
 export const useAuthStore = create((set, get) => ({
@@ -30,7 +31,7 @@ export const useAuthStore = create((set, get) => ({
   login: async (email, password) => {
     set({ loading: true })
     try {
-      const res = await axios.post('/api/auth/login/', { email, password })
+      const res = await apiClient.post('/api/auth/login/', { email, password })
       const { tokens, user } = res.data
       localStorage.setItem('access_token', tokens.access)
       localStorage.setItem('refresh_token', tokens.refresh)
@@ -52,7 +53,7 @@ export const useAuthStore = create((set, get) => ({
   register: async ({ email, username, password, confirmPassword, role, firstName, lastName }) => {
     set({ loading: true })
     try {
-      const res = await axios.post('/api/auth/register/', {
+      const res = await apiClient.post('/api/auth/register/', {
         email,
         username,
         password,
@@ -83,7 +84,7 @@ export const useAuthStore = create((set, get) => ({
     const refresh = get().refreshToken
     if (refresh) {
       try {
-        await axios.post('/api/auth/logout/', { refresh }, {
+        await apiClient.post('/api/auth/logout/', { refresh }, {
           headers: { Authorization: `Bearer ${get().accessToken}` }
         })
       } catch (e) {
@@ -106,7 +107,7 @@ export const useAuthStore = create((set, get) => ({
     const access = localStorage.getItem('access_token')
     if (access) {
       try {
-        const res = await axios.get('/api/auth/me/', {
+        const res = await apiClient.get('/api/auth/me/', {
           headers: { Authorization: `Bearer ${access}` }
         })
         set({ user: res.data, isAuthenticated: true, loading: false })
@@ -115,12 +116,13 @@ export const useAuthStore = create((set, get) => ({
         const refresh = localStorage.getItem('refresh_token')
         if (refresh) {
           try {
-            const res = await axios.post('/api/auth/token/refresh/', { refresh })
+            const baseURL = import.meta.env.VITE_API_URL || ''
+            const res = await axios.post(`${baseURL}/api/auth/token/refresh/`, { refresh })
             const newAccess = res.data.access
             localStorage.setItem('access_token', newAccess)
             
             // Get user profile
-            const profileRes = await axios.get('/api/auth/me/', {
+            const profileRes = await apiClient.get('/api/auth/me/', {
               headers: { Authorization: `Bearer ${newAccess}` }
             })
             set({

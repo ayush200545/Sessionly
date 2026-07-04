@@ -1,12 +1,13 @@
 from pathlib import Path
 from datetime import timedelta
 from decouple import config
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 SECRET_KEY = config('DJANGO_SECRET_KEY')
 DEBUG = config('DJANGO_DEBUG', default=False, cast=bool)
-ALLOWED_HOSTS = config('DJANGO_ALLOWED_HOSTS', default='localhost').split(',')
+ALLOWED_HOSTS = config('DJANGO_ALLOWED_HOSTS', default='localhost,127.0.0.1,.vercel.app,.onrender.com').split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -32,6 +33,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -56,15 +58,13 @@ if USE_SQLITE:
         }
     }
 else:
+    # Use dj_database_url to parse DATABASE_URL environment variable from Render/Neon
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': config('POSTGRES_DB', default='sessions_marketplace'),
-            'USER': config('POSTGRES_USER', default='postgres'),
-            'PASSWORD': config('POSTGRES_PASSWORD', default='postgres123'),
-            'HOST': config('POSTGRES_HOST', default='db'),
-            'PORT': config('POSTGRES_PORT', default='5432'),
-        }
+        'default': dj_database_url.config(
+            default=config('DATABASE_URL', default='postgres://postgres:postgres123@db:5432/sessions_marketplace'),
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
     }
 
 # REST Framework
@@ -122,7 +122,7 @@ SOCIAL_AUTH_GITHUB_REDIRECT_URI = config(
 # Prevent social-auth from raising exceptions in views (redirects gracefully instead)
 SOCIAL_AUTH_RAISE_EXCEPTIONS = True
 # Only allow redirects back to our own frontend host
-SOCIAL_AUTH_ALLOWED_REDIRECT_HOSTS = ['localhost', '127.0.0.1']
+SOCIAL_AUTH_ALLOWED_REDIRECT_HOSTS = config('SOCIAL_AUTH_ALLOWED_REDIRECT_HOSTS', default='localhost,127.0.0.1,.vercel.app').split(',')
 # After login, redirect to our JWT-issuing view
 LOGIN_REDIRECT_URL = '/api/auth/oauth-redirect/'
 LOGIN_ERROR_URL = config('FRONTEND_URL', default='http://localhost:3000') + '/auth/callback?error=login_failed'
@@ -143,11 +143,14 @@ SOCIAL_AUTH_PIPELINE = (
 
 # CORS
 CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS', default='http://localhost:3000').split(',')
+CORS_ALLOW_ALL_ORIGINS = config('CORS_ALLOW_ALL_ORIGINS', default=False, cast=bool)
 CORS_ALLOW_CREDENTIALS = True
 
 # Static / Media
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
