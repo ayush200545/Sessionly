@@ -31,7 +31,7 @@ class User(AbstractUser):
     def display_avatar(self):
         if self.avatar:
             return self.avatar.url
-        return self.avatar_url or '/static/default_avatar.png'
+        return self.avatar_url or f"https://api.dicebear.com/7.x/initials/svg?seed={self.username}"
 
     @property
     def is_creator(self):
