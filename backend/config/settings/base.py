@@ -107,20 +107,12 @@ AUTHENTICATION_BACKENDS = (
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = config('GOOGLE_CLIENT_ID', default='')
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = config('GOOGLE_CLIENT_SECRET', default='')
 SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ['email', 'profile']
-# The URI Google redirects back to after user consent. Must match Google Cloud Console exactly.
-SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = config(
-    'GOOGLE_REDIRECT_URI',
-    default='http://localhost/api/social/complete/google-oauth2/'
-)
+# The URI Google redirects back to after user consent. Automatically inferred by social-django.
 SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {'prompt': 'select_account'}
 
 SOCIAL_AUTH_GITHUB_KEY = config('GITHUB_CLIENT_ID', default='')
 SOCIAL_AUTH_GITHUB_SECRET = config('GITHUB_CLIENT_SECRET', default='')
 SOCIAL_AUTH_GITHUB_SCOPE = ['user:email']
-SOCIAL_AUTH_GITHUB_REDIRECT_URI = config(
-    'GITHUB_REDIRECT_URI',
-    default='http://localhost/api/social/complete/github/'
-)
 
 # Prevent social-auth from raising exceptions in views (redirects gracefully instead)
 SOCIAL_AUTH_RAISE_EXCEPTIONS = True
