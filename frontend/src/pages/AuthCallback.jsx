@@ -87,7 +87,7 @@ export default function AuthCallback() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <button
-              onClick={() => window.location.href = '/api/social/login/google-oauth2/'}
+              onClick={() => window.location.href = `${import.meta.env.VITE_API_URL || 'https://sessionly-2weo.onrender.com'}/api/social/login/google-oauth2/`}
               className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-sm font-bold rounded-xl hover:brightness-110 transition-all shadow-md"
             >
               <RefreshCw size={15} />
