@@ -185,7 +185,11 @@ def create_razorpay_order(request, booking_id):
     from django.conf import settings
 
     amount_in_paise = int(booking.session.price * 100)
-    order_result = RazorpayService.create_payment_link(amount_in_paise, booking.id, booking.session.title, request.user.email)
+    
+    try:
+        order_result = RazorpayService.create_payment_link(amount_in_paise, booking.id, booking.session.title, request.user.email)
+    except Exception as e:
+        return Response({'error': f"Payment setup error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     booking.razorpay_order_id = order_result['order_id']
     booking.save(update_fields=['razorpay_order_id'])
